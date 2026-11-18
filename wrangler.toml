@@ -1,0 +1,9 @@
+name = "pop-up-pwa"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Bind your KV namespace for real-time state synchronization
+# Create one with: npx wrangler kv namespace create POP_UP_KV
+[[kv_namespaces]]
+binding = "POP_UP_KV"
+id = "YOUR_KV_NAMESPACE_ID"

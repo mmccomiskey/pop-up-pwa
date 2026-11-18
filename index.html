@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC LFG • Friday Nov 20</title>
+    <meta name="theme-color" content="#0b0f17" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NYC LFG" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card-bg: rgba(22, 27, 39, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-orange: #ff5722;
+      --accent-gold: #ffb703;
+      --accent-green: #00e676;
+      --accent-cyan: #00e5ff;
+      --accent-pink: #ff2a85;
+      --text-main: #f0f4fc;
+      --text-sub: #94a3b8;
+      --tag-beer: #f59e0b;
+      --tag-food: #ef4444;
+      --tag-culture: #8b5cf6;
+      --tag-walk: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 87, 34, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.1) 0%, transparent 40%),
+        linear-gradient(180deg, #090c13 0%, #0d131f 100%);
+      color: var(--text-main);
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px 80px;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 28px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px;
+      background: rgba(255, 183, 3, 0.15); border: 1px solid rgba(255, 183, 3, 0.35);
+      color: var(--accent-gold); font-size: 13px; font-weight: 700; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    h1 {
+      font-size: clamp(2.3rem, 5.5vw, 3.4rem); font-weight: 800; letter-spacing: -1.5px;
+      line-height: 1.05; background: linear-gradient(135deg, #fff 30%, #ffd166 70%, #ff5722 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px;
+    }
+    .subtitle { color: var(--text-sub); font-size: 1.02rem; max-width: 580px; margin: 0 auto 16px; line-height: 1.5; }
+    .chat-quote {
+      background: rgba(255, 255, 255, 0.03); border-left: 3px solid var(--accent-pink);
+      padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 0.88rem; color: #cbd5e1;
+      font-style: italic; margin-bottom: 24px; display: flex; align-items: center;
+      justify-content: space-between; gap: 10px;
+    }
+    .chat-quote span.author { font-style: normal; font-weight: 700; color: var(--accent-pink); font-size: 0.75rem; text-transform: uppercase; }
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      padding: 12px 14px; border-radius: 12px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+    .stat-lbl { font-size: 0.72rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; justify-content: center; }
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
+      color: var(--text-sub); padding: 7px 16px; border-radius: 999px; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+    }
+    .filter-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .filter-btn.active {
+      background: var(--accent-orange); border-color: var(--accent-orange); color: #fff;
+      box-shadow: 0 0 15px rgba(255, 87, 34, 0.4);
+    }
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 9px; top: 10px; bottom: 20px; width: 2px;
+      background: linear-gradient(180deg, var(--accent-orange) 0%, var(--accent-gold) 50%, var(--accent-green) 100%);
+      opacity: 0.35;
+    }
+    .stop-card {
+      position: relative; background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(12px);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stop-card:hover {
+      border-color: rgba(255, 255, 255, 0.18); transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .stop-marker {
+      position: absolute; left: -28px; top: 24px; width: 18px; height: 18px; border-radius: 50%;
+      background: var(--bg); border: 3px solid var(--accent-orange); transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(255, 87, 34, 0.6);
+    }
+    .stop-card[data-cat="beer"] .stop-marker { border-color: var(--tag-beer); box-shadow: 0 0 10px var(--tag-beer); }
+    .stop-card[data-cat="food"] .stop-marker { border-color: var(--tag-food); box-shadow: 0 0 10px var(--tag-food); }
+    .stop-card[data-cat="culture"] .stop-marker { border-color: var(--tag-culture); box-shadow: 0 0 10px var(--tag-culture); }
+    .stop-card[data-cat="transit"] .stop-marker { border-color: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+    .time-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700;
+      color: var(--accent-gold); background: rgba(255, 183, 3, 0.1); padding: 3px 8px;
+      border-radius: 6px; border: 1px solid rgba(255, 183, 3, 0.25);
+    }
+    .stop-title { font-size: 1.3rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .stop-neighborhood { font-size: 0.85rem; color: var(--text-sub); font-weight: 500; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .tag { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; }
+    .tag-beer { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag-food { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .tag-culture { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+    .tag-walk { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag-transit { background: rgba(0, 229, 255, 0.15); color: #38bdf8; border: 1px solid rgba(0, 229, 255, 0.3); }
+    .desc { color: #cbd5e1; font-size: 0.95rem; line-height: 1.55; margin: 10px 0 14px; }
+    .chat-context {
+      background: rgba(0, 0, 0, 0.25); border-radius: 8px; padding: 10px 12px; font-size: 0.85rem;
+      color: #94a3b8; border-left: 2px solid var(--accent-orange); margin-bottom: 14px;
+    }
+    .chat-context strong { color: #e2e8f0; }
+    .links-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn-link {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px; color: #fff; text-decoration: none; font-size: 0.82rem; font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .btn-link:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
+    .btn-link.primary { background: var(--accent-orange); border-color: var(--accent-orange); color: #fff; }
+    .btn-link.primary:hover { background: #f4511e; box-shadow: 0 4px 12px rgba(255, 87, 34, 0.35); }
+    .check-btn {
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem;
+      color: var(--text-sub); background: transparent; border: 1px dashed rgba(255, 255, 255, 0.2);
+      padding: 6px 12px; border-radius: 8px; font-family: inherit; transition: all 0.2s;
+    }
+    .check-btn:hover { border-color: var(--accent-green); color: var(--accent-green); }
+    .stop-card.completed { opacity: 0.55; border-color: rgba(0, 230, 118, 0.3); }
+    .stop-card.completed .stop-title { text-decoration: line-through; }
+    .stop-card.completed .check-btn { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--accent-green); color: var(--accent-green); }
+    .rules-card {
+      margin-top: 36px; background: linear-gradient(135deg, rgba(255, 87, 34, 0.08) 0%, rgba(255, 183, 3, 0.05) 100%);
+      border: 1px solid rgba(255, 183, 3, 0.2); border-radius: 16px; padding: 24px;
+    }
+    .rules-card h3 { font-size: 1.25rem; color: var(--accent-gold); margin-bottom: 12px; }
+    .rules-card ul { list-style-type: none; display: flex; flex-direction: column; gap: 10px; }
+    .rules-card li { font-size: 0.92rem; color: #cbd5e1; display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; }
+    .rules-card li::before { content: '⚡'; font-size: 0.9rem; }
+    .float-nav {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px); padding: 8px 16px; border-radius: 999px;
+      display: flex; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100;
+    }
+    .float-nav a, .float-nav button {
+      background: none; border: none; color: #fff; font-family: inherit; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; text-decoration: none; padding: 4px 10px; border-radius: 999px;
+      transition: background 0.2s; display: flex; align-items: center; gap: 5px;
+    }
+    .float-nav a:hover, .float-nav button:hover { background: rgba(255, 255, 255, 0.12); }
+    @media (max-width: 600px) {
+      .card-top { flex-direction: column; align-items: flex-start; }
+      .stop-title { font-size: 1.15rem; }
+      .timeline { padding-left: 18px; }
+      .timeline::before { left: 4px; }
+      .stop-marker { left: -18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Instant Boot Splash Screen -->
+  <div id="app-splash" style="position:fixed; inset:0; background:#0b0f17; z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; transition:opacity 0.35s ease, visibility 0.35s ease;">
+    <div style="font-size: 72px; animation: pulseFlame 1.4s infinite alternate ease-in-out;">🔥</div>
+    <div style="font-family: -apple-system, system-ui, sans-serif; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px;">NYC LFG</div>
+    <div style="font-family: -apple-system, system-ui, sans-serif; font-size: 14px; font-weight: 600; color: #ffb703; letter-spacing: 0.5px;">Firing up your trip...</div>
+  </div>
+  <style>
+    @keyframes pulseFlame {
+      0% { transform: scale(0.9) translateY(4px); filter: drop-shadow(0 0 10px rgba(255, 87, 34, 0.4)); }
+      100% { transform: scale(1.15) translateY(-6px); filter: drop-shadow(0 0 25px rgba(255, 183, 3, 0.8)); }
+    }
+  </style>
+
+
+  <div class="container">
+    <header>
+      <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap;"><div class="badge" style="margin-bottom:0;">🔥 NYC LFG • Friday, Nov 20</div><div id="live-status" style="font-family: 'JetBrains Mono', monospace; font-size:12px; font-weight:700; color:#00e676; display:inline-flex; align-items:center; gap:6px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.25); padding:4px 12px; border-radius:999px;">● Live Sync Active</div></div>
+      <h1>West Side Crawl</h1>
+      <p class="subtitle">
+        High Line stroll, German drafts, street tacos, luxury watches, Irish pints & iconic NYC eats. North-to-South with zero backtracking.
+      </p>
+
+      <div class="chat-quote">
+        <div>
+          <span class="author">Chat Strategy:</span> "We could just do a food and drink tour around town. Keep the meals small. Steady drankin'."
+        </div>
+        <span>🍻</span>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-card"><div class="stat-val">10:10 AM</div><div class="stat-lbl">Arrival (PABT)</div></div>
+        <div class="stat-card"><div class="stat-val">7:30 PM</div><div class="stat-lbl">Depart PABT</div></div>
+        <div class="stat-card"><div class="stat-val">~9.2 hrs</div><div class="stat-lbl">Manhattan Window</div></div>
+        <div class="stat-card"><div class="stat-val">~3.2 mi</div><div class="stat-lbl">Total Walk</div></div>
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterCategory('all', this)">All Stops</button>
+        <button class="filter-btn" onclick="filterCategory('food', this)">🌮 Food Bites</button>
+        <button class="filter-btn" onclick="filterCategory('beer', this)">🍺 Drinks & Pints</button>
+        <button class="filter-btn" onclick="filterCategory('culture', this)">🎨 Art & Watches</button>
+        <button class="filter-btn" onclick="filterCategory('transit', this)">🚌 Transit</button>
+      </div>
+    </header>
+
+    <div class="timeline" id="timeline">
+
+      <!-- Stop 0 -->
+      <div class="stop-card" id="stop-pabt-arrival" data-cat="transit">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">10:10 AM</span>
+            <div class="stop-title">Port Authority Bus Terminal (PABT)</div>
+            <div class="stop-neighborhood">8th Ave & 42nd St</div>
+          </div>
+          <div class="tags"><span class="tag tag-transit">Bus Arrival</span></div>
+        </div>
+        <p class="desc">
+          Peter Pan bus pulls in from Baltimore. Disembark, hit restrooms, and take note of your evening departure gate / wing before heading south toward 10th Ave & Hudson Yards.
+        </p>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=Port+Authority+Bus+Terminal+New+York" target="_blank">📍 Google Maps</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 1 -->
+      <div class="stop-card" id="stop-russ-watches" data-cat="food">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">10:30 – 11:30 AM</span>
+            <div class="stop-title">Russ & Daughters + Watch Shops</div>
+            <div class="stop-neighborhood">Hudson Yards • 502 W 34th St / Mall</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-food">Lox Bagels</span>
+            <span class="tag tag-culture">Watches</span>
+            <span class="tag tag-beer">Morning Beers?</span>
+          </div>
+        </div>
+        <p class="desc">
+          World-famous smoked salmon & classic appetizing on fresh bagels. Grab breakfast bites and coffee, then window-shop high-end horology at Watches of Switzerland and boutiques inside Hudson Yards.
+        </p>
+        <div class="chat-context">
+          <strong>Chat Origin:</strong> "Russ and Daughters is pretty famous for their lox bagel... they have a location right near Hudson yards. Browse the watch shops with some coffee to start? ...or some beers to start 🍺"
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=Russ+and+Daughters+Hudson+Yards" target="_blank">📍 Google Maps</a>
+          <a class="btn-link" href="https://www.russanddaughters.com" target="_blank">🌐 Website</a>
+          <a class="btn-link" href="https://maps.google.com/?q=Watches+of+Switzerland+Hudson+Yards" target="_blank">⌚ Watches of Switzerland</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 2 -->
+      <div class="stop-card" id="stop-highline" data-cat="culture">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">11:30 AM – 12:15 PM</span>
+            <div class="stop-title">The High Line Elevated Stroll</div>
+            <div class="stop-neighborhood">Hudson Yards (34th St) ➔ Chelsea (15th St)</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-walk">Scenic Walk</span>
+            <span class="tag tag-culture">Architecture</span>
+          </div>
+        </div>
+        <p class="desc">
+          Enter the High Line at 34th or 30th St and walk south above 10th Ave. Outstanding river views, modern architecture, and outdoor art without dealing with traffic lights or cross-streets.
+        </p>
+        <div class="chat-context">
+          <strong>Chat Origin:</strong> "Stick to west side since that’s where the busses land... Hit the high line down."
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=The+High+Line+New+York" target="_blank">📍 Google Maps</a>
+          <a class="btn-link" href="https://www.thehighline.org" target="_blank">🌐 High Line Guide</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 3 -->
+      <div class="stop-card" id="stop-chelsea-market" data-cat="beer">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">12:15 – 1:30 PM</span>
+            <div class="stop-title">Chelsea Market: Currywurst & Tacos</div>
+            <div class="stop-neighborhood">Chelsea • 75 9th Ave</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-beer">German Drafts</span>
+            <span class="tag tag-food">Currywurst</span>
+            <span class="tag tag-food">Street Tacos</span>
+          </div>
+        </div>
+        <p class="desc">
+          Exit High Line directly into Chelsea Market. Hit <strong>Berlin Currywurst</strong> for bratwurst/currywurst and cold German beers (replicating the crew's classic OG watch fair trip), then grab legendary adobada pork tacos at <strong>Los Tacos No. 1</strong>.
+        </p>
+        <div class="chat-context">
+          <strong>Chat Origin:</strong> "Lunch + German biers at Chelsea market after Hudson yards and high line. We can basically track the same plan of the OG watch fair day... Also would like to try a few of these puppies [Los Tacos No. 1]."
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=Berlin+Currywurst+Chelsea+Market" target="_blank">📍 Berlin Currywurst</a>
+          <a class="btn-link primary" href="https://maps.google.com/?q=Los+Tacos+No+1+Chelsea+Market" target="_blank">📍 Los Tacos No. 1</a>
+          <a class="btn-link" href="https://www.lostacos1.com" target="_blank">🌐 Los Tacos Menu</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 4 -->
+      <div class="stop-card" id="stop-standard-whitney" data-cat="beer">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">1:30 – 2:30 PM</span>
+            <div class="stop-title">The Standard Biergarten & The Whitney</div>
+            <div class="stop-neighborhood">Meatpacking District • Washington & 13th St / Gansevoort</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-beer">Biergarten</span>
+            <span class="tag tag-culture">Roy Lichtenstein</span>
+          </div>
+        </div>
+        <p class="desc">
+          Right at the south base of the High Line:
+          <br>• <strong>The Standard Biergarten:</strong> Under the High Line trestles — ping pong, imported German steins, sausages, and huge pretzels.
+          <br>• <strong>The Whitney Museum (Option):</strong> World-class modern art, top-floor rooftop terraces with Hudson River views, and the <em>Roy Lichtenstein: Like New</em> pop art exhibition.
+        </p>
+        <div class="chat-context">
+          <strong>Chat Origin:</strong> "The Standard Biergarten... Around the corner. I believe we went here too... Whitney Museum: 'This would be very cultured of us' / 'Roy Lichtenstein: Like New... comic books inspired, cool building with dope views'."
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=The+Standard+Biergarten+New+York" target="_blank">📍 The Standard Biergarten</a>
+          <a class="btn-link" href="https://maps.google.com/?q=Whitney+Museum+of+American+Art+New+York" target="_blank">📍 The Whitney Museum</a>
+          <a class="btn-link" href="https://whitney.org/exhibitions/roy-lichtenstein" target="_blank">🖼️ Lichtenstein Exhibit</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 5 -->
+      <div class="stop-card" id="stop-graces-pub" data-cat="beer">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">2:45 – 3:45 PM</span>
+            <div class="stop-title">Grace's Irish Pub</div>
+            <div class="stop-neighborhood">Chelsea / West Village • 252 W 14th St</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-beer">Guinness Pints</span>
+            <span class="tag tag-beer">Pub Tunes</span>
+          </div>
+        </div>
+        <p class="desc">
+          Top-tier Irish pub atmosphere with pristine 20oz imperial pints of Guinness, great glassware, and killer tunes playing in the background. Perfect spot for steady drankin' and a relaxed sit-down breather.
+        </p>
+        <div class="chat-context">
+          <strong>Chat Origin:</strong> "Grace's Irish pub... Pint here. I want one of those glasses. Fuckin’ Tony D rippin’ choons."
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=Graces+Irish+Pub+14th+St+New+York" target="_blank">📍 Google Maps</a>
+          <a class="btn-link" href="https://www.gracesnyc.com" target="_blank">🌐 Grace's Site</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 6 -->
+      <div class="stop-card" id="stop-grannys-dante" data-cat="food">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">3:45 – 4:45 PM</span>
+            <div class="stop-title">Granny's Batch & Dante West Village</div>
+            <div class="stop-neighborhood">West Village • Hudson St & Perry St</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-food">Gourmet Cookies</span>
+            <span class="tag tag-beer">Aperitivo / Negronis</span>
+          </div>
+        </div>
+        <p class="desc">
+          Head deep into the cobblestone charm of the West Village:
+          <br>• <strong>Granny's Batch:</strong> Massive weekly special cinnamon roll cookies & chocolate chip cookies.
+          <br>• <strong>Dante West Village:</strong> Ranked among the world's best bars (2 blocks away on Hudson & Perry) for an iconic Garibaldi or negroni.
+        </p>
+        <div class="chat-context">
+          <strong>Chat Origin:</strong> "Also gonna need to get me onna theeeez: Granny's Batch Cinnamon Roll Cookie... Right down in the west village, two blocks from Dante."
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://www.instagram.com/grannysbatch/" target="_blank">📸 Granny's Batch IG</a>
+          <a class="btn-link primary" href="https://maps.google.com/?q=Dante+West+Village+New+York" target="_blank">📍 Dante West Village</a>
+          <a class="btn-link" href="https://www.dante-nyc.com" target="_blank">🌐 Dante NYC</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 7 -->
+      <div class="stop-card" id="stop-johns-bleecker" data-cat="food">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">4:45 – 5:45 PM</span>
+            <div class="stop-title">John's of Bleecker Street</div>
+            <div class="stop-neighborhood">West Village • 278 Bleecker St</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-food">Coal-Fired Pizza</span>
+            <span class="tag tag-beer">Pitchers</span>
+          </div>
+        </div>
+        <p class="desc">
+          NYC institution serving crispy coal-fired brick oven whole pies since 1929 in historic wooden booths with carved initials. Share a pie with a cold pitcher before heading back uptown.
+        </p>
+        <div class="chat-context">
+          <strong>Chat Origin:</strong> "John's of Bleecker Street · 4.6★(8770) · Pizza restaurant... Also in the area. Okay, I’m done. We have plennnnttty of options."
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=Johns+of+Bleecker+Street+New+York" target="_blank">📍 Google Maps</a>
+          <a class="btn-link" href="https://www.johnsofbleecker.com" target="_blank">🌐 Website & Menu</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 8 -->
+      <div class="stop-card" id="stop-subway-ace" data-cat="transit">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">5:45 – 6:15 PM</span>
+            <div class="stop-title">Express Subway to Midtown (A / C / E)</div>
+            <div class="stop-neighborhood">W 4th St - Wash Sq Station ➔ 42nd St Port Authority</div>
+          </div>
+          <div class="tags"><span class="tag tag-transit">MTA Express</span></div>
+        </div>
+        <p class="desc">
+          Tap OMNY at West 4th St / 8th Ave station onto the uptown <strong>A, C, or E train</strong>. Direct 10–12 minute ride straight beneath 8th Ave right into Port Authority Terminal.
+        </p>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=West+4th+St+Subway+Station+New+York" target="_blank">📍 W 4th St Station</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 9 -->
+      <div class="stop-card" id="stop-rudys-joes" data-cat="beer">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">6:15 – 7:00 PM</span>
+            <div class="stop-title">Victory Lap: Rudy's Bar & Joe's Pizza</div>
+            <div class="stop-neighborhood">Hell's Kitchen / Times Sq • 9th Ave & 44th St</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-beer">Dive Bar</span>
+            <span class="tag tag-food">Free Hot Dog</span>
+            <span class="tag tag-food">Pre-Bus Slice</span>
+          </div>
+        </div>
+        <p class="desc">
+          Only 2 blocks from the bus gates. Grab a final  draft beer and legendary free hot dog at historic Rudy's Bar & Grill (or grab a hot slice on a paper plate from Joe's Pizza on 40th & Broadway) before boarding.
+        </p>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.google.com/?q=Rudys+Bar+and+Grill+9th+Ave+New+York" target="_blank">📍 Rudy's Bar</a>
+          <a class="btn-link" href="https://maps.google.com/?q=Joes+Pizza+Broadway+40th+St+New+York" target="_blank">📍 Joe's Pizza</a>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      <!-- Stop 10 -->
+      <div class="stop-card" id="stop-pabt-depart" data-cat="transit">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">7:00 – 7:30 PM</span>
+            <div class="stop-title">Port Authority Return Gate & Boarding</div>
+            <div class="stop-neighborhood">Port Authority Bus Terminal (PABT)</div>
+          </div>
+          <div class="tags"><span class="tag tag-transit">Bus Departure</span></div>
+        </div>
+        <p class="desc">
+          Arrive at the gate wing by 7:10 PM. Board the <strong>7:30 PM Peter Pan Express bus</strong> back to Baltimore. Sleep the 4-hour ride home!
+        </p>
+        <div class="links-row">
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mission Accomplished</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="rules-card">
+      <h3>🎯 Group Crawl Rules & Wildcard Spots</h3>
+      <ul>
+        <li><strong>Small bites & shared dishes:</strong> Don't order full sit-down entrees at each place — order 2-3 tacos or sausages to split among the crew so everyone stays agile.</li>
+        <li><strong>Wildcard Option 1 — Alan The Pickle Guy (The Pickle Guys / LES):</strong> Mentioned in the chat near the Tenement Museum (Essex St). It's a bit further east, so keep it as a wildcard if the group decides to venture down to the Lower East Side. <a href="https://maps.google.com/?q=The+Pickle+Guys+Essex+St+New+York" target="_blank" style="color:var(--accent-gold); text-decoration: underline;">Google Maps Link</a></li>
+        <li><strong>Wildcard Option 2 — Le Relais de Venise:</strong> Famous steak frites & secret green butter sauce (Midtown East on 52nd & Lex). Line starts before opening — great for another trip or if you decide to pivot east.</li>
+        <li><strong>Wildcard Option 3 — Rétromobile Classic Car Show (Javits Center):</strong> 11th Ave & 34th St, directly adjacent to Hudson Yards if the crew still wants to pop in for collector car eye-candy.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="float-nav">
+    <a href="#timeline">🧭 Timeline</a>
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆ Top</button>
+    <button onclick="sharePlan()">📤 Share</button>
+  </div>
+
+  <script>
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cards = document.querySelectorAll('.stop-card');
+      cards.forEach(card => {
+        if (cat === 'all') {
+          card.style.display = 'block';
+        } else {
+          const cardCat = card.getAttribute('data-cat');
+          card.style.display = (cardCat === cat) ? 'block' : 'none';
+        }
+      });
+    }
+
+    // Offline Storage & Sync Outbox
+    const STORAGE_KEY = 'nyc_lfg_completed';
+    const QUEUE_KEY = 'nyc_lfg_sync_queue';
+
+    let completedStops = new Set();
+    let syncQueue = [];
+
+    // Initialize from localStorage immediately
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        completedStops = new Set(JSON.parse(cached));
+      }
+      const queued = localStorage.getItem(QUEUE_KEY);
+      if (queued) {
+        syncQueue = JSON.parse(queued);
+      }
+    } catch (e) {
+      console.warn('localStorage error:', e);
+    }
+
+    function saveLocal() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(completedStops)));
+        localStorage.setItem(QUEUE_KEY, JSON.stringify(syncQueue));
+      } catch (e) {}
+    }
+
+    async function fetchState() {
+      if (!navigator.onLine) {
+        updateLiveIndicator(false, 'Offline (Cached)');
+        return;
+      }
+
+      // Flush queue first if any pending changes
+      if (syncQueue.length > 0) {
+        await flushQueue();
+      }
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+        const res = await fetch('/api/state', { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.completed)) {
+            // When no pending offline actions, server is the single source of truth
+            if (syncQueue.length === 0) {
+              completedStops = new Set(data.completed);
+            } else {
+              // Apply remote, then re-apply pending queue on top
+              completedStops = new Set(data.completed);
+              syncQueue.forEach(q => {
+                if (q.completed) completedStops.add(q.stopId);
+                else completedStops.delete(q.stopId);
+              });
+            }
+            saveLocal();
+            renderCompletedState();
+            updateLiveIndicator(true, 'Live Sync Active');
+          }
+        }
+      } catch (e) {
+        updateLiveIndicator(false, 'Offline / Signal Low');
+      }
+    }
+
+    async function flushQueue() {
+      if (syncQueue.length === 0 || !navigator.onLine) return;
+      const queueToFlush = [...syncQueue];
+      for (const item of queueToFlush) {
+        try {
+          await fetch('/api/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+          });
+          syncQueue = syncQueue.filter(q => q !== item);
+          saveLocal();
+        } catch (err) {
+          console.warn('Failed to flush item, keeping in queue', err);
+          break;
+        }
+      }
+    }
+
+    function renderCompletedState() {
+      document.querySelectorAll('.stop-card').forEach(card => {
+        const id = card.id;
+        const btn = card.querySelector('.check-btn');
+        if (completedStops.has(id)) {
+          card.classList.add('completed');
+          if (btn) btn.innerHTML = '✓ Done!';
+        } else {
+          card.classList.remove('completed');
+          if (btn) btn.innerHTML = card.id === 'stop-pabt-depart' ? '○ Mission Accomplished' : '○ Mark Done';
+        }
+      });
+    }
+
+    async function toggleComplete(btn) {
+      const card = btn.closest('.stop-card');
+      const id = card.id;
+      const willBeCompleted = !card.classList.contains('completed');
+
+      // 1. Instant local optimistic update
+      if (willBeCompleted) {
+        completedStops.add(id);
+      } else {
+        completedStops.delete(id);
+      }
+      renderCompletedState();
+
+      const action = { stopId: id, completed: willBeCompleted, timestamp: Date.now() };
+      syncQueue.push(action);
+      saveLocal();
+
+      // 2. Try network push
+      if (navigator.onLine) {
+        await flushQueue();
+        updateLiveIndicator(true, 'Live Sync Active');
+      } else {
+        updateLiveIndicator(false, 'Saved Offline (Will Sync)');
+      }
+    }
+
+    function updateLiveIndicator(connected, customText) {
+      const ind = document.getElementById('live-status');
+      if (!ind) return;
+      if (connected) {
+        ind.innerHTML = '● ' + (customText || 'Live Sync Active');
+        ind.style.color = '#00e676';
+        ind.style.background = 'rgba(0,230,118,0.1)';
+        ind.style.borderColor = 'rgba(0,230,118,0.25)';
+      } else {
+        ind.innerHTML = '⚡ ' + (customText || 'Offline Mode');
+        ind.style.color = '#ffb703';
+        ind.style.background = 'rgba(255,183,3,0.1)';
+        ind.style.borderColor = 'rgba(255,183,3,0.25)';
+      }
+    }
+
+    // Auto-refresh immediately when unlocking phone or switching back to browser tab
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        fetchState();
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      fetchState();
+    });
+
+    // Event listeners for online/offline
+    window.addEventListener('online', () => {
+      updateLiveIndicator(true, 'Reconnected! Syncing...');
+      fetchState();
+    });
+
+    window.addEventListener('offline', () => {
+      updateLiveIndicator(false, 'Offline Mode');
+    });
+
+    // Register Service Worker for true full offline caching
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('SW register fail:', err);
+      });
+    }
+
+    // Initial render from local cache
+    
+    function hideSplash() {
+      const splash = document.getElementById('app-splash');
+      if (splash && splash.style.display !== 'none') {
+        splash.style.opacity = '0';
+        splash.style.visibility = 'hidden';
+        setTimeout(() => splash.remove(), 400);
+      }
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      setTimeout(hideSplash, 450);
+    } else {
+      document.addEventListener('DOMContentLoaded', () => setTimeout(hideSplash, 450));
+    }
+    // Safety fallback
+    setTimeout(hideSplash, 1200);
+
+    renderCompletedState();
+    fetchState();
+    setInterval(fetchState, 3500);
+
+    function sharePlan() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'NYC LFG • Friday Itinerary',
+          text: 'West side crawl from Hudson Yards to West Village!',
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('URL copied to clipboard! Send to the group chat.');
+      }
+    }
+  </script>
+</body>
+</html>
