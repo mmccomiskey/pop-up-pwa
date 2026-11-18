@@ -178,9 +178,9 @@
       color: #fff;
       border-color: rgba(255, 255, 255, 0.25);
     }
-    .stop-card:target {
-      border-color: var(--accent-orange);
-      box-shadow: 0 0 25px rgba(255, 87, 34, 0.35);
+    .stop-card:target, .stop-card.highlight-flash {
+      border-color: var(--accent-orange) !important;
+      box-shadow: 0 0 30px rgba(255, 87, 34, 0.6) !important;
       animation: highlightPulse 2s ease-out;
     }
     @keyframes highlightPulse {
@@ -839,10 +839,32 @@
     setInterval(fetchState, 3500);
 
     
+    function scrollToCard(stopId) {
+      const target = document.getElementById(stopId);
+      if (target) {
+        // If hidden by category filter, reset filter to 'all'
+        if (target.style.display === 'none') {
+          filterCategory('all', document.querySelector('.filter-btn'));
+        }
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.add('highlight-flash');
+        setTimeout(() => target.classList.remove('highlight-flash'), 2200);
+      }
+    }
+
     function copyStopLink(stopId, btn) {
-      const url = new URL(window.location.href);
-      url.hash = stopId;
-      const shareUrl = url.toString();
+      // 1. Update hash in browser address bar without reload
+      if (history.pushState) {
+        history.pushState(null, null, '#' + stopId);
+      } else {
+        window.location.hash = stopId;
+      }
+
+      // 2. Immediate scroll to card
+      scrollToCard(stopId);
+
+      // 3. Build full absolute share URL
+      const shareUrl = window.location.origin + window.location.pathname + '#' + stopId;
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(shareUrl).then(() => {
@@ -852,7 +874,7 @@
         fallbackCopy(shareUrl);
       }
 
-      // Quick visual feedback on the button
+      // Visual button feedback
       const oldText = btn.innerHTML;
       btn.innerHTML = '✓ Copied!';
       btn.style.borderColor = 'var(--accent-green)';
@@ -884,17 +906,20 @@
       }, 2400);
     }
 
-    // Scroll to hash on page load if present
-    window.addEventListener('load', () => {
+    // Scroll to hash on page load & hashchange
+    function checkHashAndScroll() {
       if (window.location.hash) {
-        const target = document.querySelector(window.location.hash);
-        if (target) {
-          setTimeout(() => {
-            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 500);
-        }
+        const id = window.location.hash.substring(1);
+        setTimeout(() => scrollToCard(id), 250);
       }
-    });
+    }
+
+    window.addEventListener('hashchange', checkHashAndScroll);
+    if (document.readyState === 'complete') {
+      checkHashAndScroll();
+    } else {
+      window.addEventListener('load', checkHashAndScroll);
+    }
 
     function sharePlan() {
       if (navigator.share) {
