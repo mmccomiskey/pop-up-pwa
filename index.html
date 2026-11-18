@@ -158,6 +158,61 @@
     .rules-card ul { list-style-type: none; display: flex; flex-direction: column; gap: 10px; }
     .rules-card li { font-size: 0.92rem; color: #cbd5e1; display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; }
     .rules-card li::before { content: '⚡'; font-size: 0.9rem; }
+
+    .copy-btn {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .stop-card:target {
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 25px rgba(255, 87, 34, 0.35);
+      animation: highlightPulse 2s ease-out;
+    }
+    @keyframes highlightPulse {
+      0% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    #toast-msg {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent-green);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      z-index: 100000;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
     .float-nav {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
       background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(255, 255, 255, 0.15);
@@ -180,6 +235,7 @@
   </style>
 </head>
 <body>
+  <div id="toast-msg">🔗 Stop link copied to clipboard!</div>
 
   <!-- Instant Boot Splash Screen -->
   <div id="app-splash" style="position:fixed; inset:0; background:#0b0f17; z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; transition:opacity 0.35s ease, visibility 0.35s ease;">
@@ -200,7 +256,7 @@
       <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap;"><div class="badge" style="margin-bottom:0;">🔥 NYC LFG • Friday, Nov 20</div><div id="live-status" style="font-family: 'JetBrains Mono', monospace; font-size:12px; font-weight:700; color:#00e676; display:inline-flex; align-items:center; gap:6px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.25); padding:4px 12px; border-radius:999px;">● Live Sync Active</div></div>
       <h1>West Side Crawl</h1>
       <p class="subtitle">
-        High Line stroll, German drafts, street tacos, luxury watches, Irish pints & iconic NYC eats. North-to-South with zero backtracking.
+        High Line stroll, German drafts, street tacos, luxury watches, jambon-beurre, Irish pints & iconic NYC eats. North-to-South with zero backtracking.
       </p>
 
       <div class="chat-quote">
@@ -244,6 +300,7 @@
         </p>
         <div class="links-row">
           <a class="btn-link primary" href="https://maps.google.com/?q=Port+Authority+Bus+Terminal+New+York" target="_blank">📍 Google Maps</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-pabt-arrival', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -273,6 +330,7 @@
           <a class="btn-link primary" href="https://maps.google.com/?q=Russ+and+Daughters+Hudson+Yards" target="_blank">📍 Google Maps</a>
           <a class="btn-link" href="https://www.russanddaughters.com" target="_blank">🌐 Website</a>
           <a class="btn-link" href="https://maps.google.com/?q=Watches+of+Switzerland+Hudson+Yards" target="_blank">⌚ Watches of Switzerland</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-russ-watches', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -300,6 +358,7 @@
         <div class="links-row">
           <a class="btn-link primary" href="https://maps.google.com/?q=The+High+Line+New+York" target="_blank">📍 Google Maps</a>
           <a class="btn-link" href="https://www.thehighline.org" target="_blank">🌐 High Line Guide</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-highline', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -329,6 +388,7 @@
           <a class="btn-link primary" href="https://maps.google.com/?q=Berlin+Currywurst+Chelsea+Market" target="_blank">📍 Berlin Currywurst</a>
           <a class="btn-link primary" href="https://maps.google.com/?q=Los+Tacos+No+1+Chelsea+Market" target="_blank">📍 Los Tacos No. 1</a>
           <a class="btn-link" href="https://www.lostacos1.com" target="_blank">🌐 Los Tacos Menu</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-chelsea-market', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -359,6 +419,7 @@
           <a class="btn-link primary" href="https://maps.google.com/?q=The+Standard+Biergarten+New+York" target="_blank">📍 The Standard Biergarten</a>
           <a class="btn-link" href="https://maps.google.com/?q=Whitney+Museum+of+American+Art+New+York" target="_blank">📍 The Whitney Museum</a>
           <a class="btn-link" href="https://whitney.org/exhibitions/roy-lichtenstein" target="_blank">🖼️ Lichtenstein Exhibit</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-standard-whitney', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -368,7 +429,7 @@
         <div class="stop-marker"></div>
         <div class="card-top">
           <div>
-            <span class="time-badge">2:45 – 3:45 PM</span>
+            <span class="time-badge">2:30 – 3:30 PM</span>
             <div class="stop-title">Grace's Irish Pub</div>
             <div class="stop-neighborhood">Chelsea / West Village • 252 W 14th St</div>
           </div>
@@ -386,6 +447,36 @@
         <div class="links-row">
           <a class="btn-link primary" href="https://maps.google.com/?q=Graces+Irish+Pub+14th+St+New+York" target="_blank">📍 Google Maps</a>
           <a class="btn-link" href="https://www.gracesnyc.com" target="_blank">🌐 Grace's Site</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-graces-pub', this)">🔗 Copy Link</button>
+          <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
+        </div>
+      </div>
+
+      
+      <!-- Stop 6.5: Richaud Petite Bakery -->
+      <div class="stop-card" id="stop-richaud-bakery" data-cat="food">
+        <div class="stop-marker"></div>
+        <div class="card-top">
+          <div>
+            <span class="time-badge">3:30 – 4:00 PM</span>
+            <div class="stop-title">Richaud Petite Bakery (Jambon-Beurre)</div>
+            <div class="stop-neighborhood">West Village • 41 Perry St</div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-food">French Bakery</span>
+            <span class="tag tag-food">Jambon-Beurre</span>
+            <span class="tag tag-food">Baguette</span>
+          </div>
+        </div>
+        <p class="desc">
+          Quintessential French boulangerie tucked on picturesque Perry Street. Outstanding classic <strong>Jambon-Beurre</strong>: crusty Parisian baguette, cultured French butter, and delicate thinly sliced ham. Perfect 14-min walk southwest of Chelsea right in the West Village pocket!
+        </p>
+        <div class="chat-context">
+          <strong>Crew Request:</strong> "Very keen to have the jambon beurre here — 14 minute walk southwest of Chelsea."
+        </div>
+        <div class="links-row">
+          <a class="btn-link primary" href="https://maps.app.goo.gl/m8wLbrtDN7ekwpuQ8" target="_blank">📍 Google Maps</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-richaud-bakery', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -395,7 +486,7 @@
         <div class="stop-marker"></div>
         <div class="card-top">
           <div>
-            <span class="time-badge">3:45 – 4:45 PM</span>
+            <span class="time-badge">4:00 – 4:45 PM</span>
             <div class="stop-title">Granny's Batch & Dante West Village</div>
             <div class="stop-neighborhood">West Village • Hudson St & Perry St</div>
           </div>
@@ -416,6 +507,7 @@
           <a class="btn-link primary" href="https://www.instagram.com/grannysbatch/" target="_blank">📸 Granny's Batch IG</a>
           <a class="btn-link primary" href="https://maps.google.com/?q=Dante+West+Village+New+York" target="_blank">📍 Dante West Village</a>
           <a class="btn-link" href="https://www.dante-nyc.com" target="_blank">🌐 Dante NYC</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-grannys-dante', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -443,6 +535,7 @@
         <div class="links-row">
           <a class="btn-link primary" href="https://maps.google.com/?q=Johns+of+Bleecker+Street+New+York" target="_blank">📍 Google Maps</a>
           <a class="btn-link" href="https://www.johnsofbleecker.com" target="_blank">🌐 Website & Menu</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-johns-bleecker', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -463,6 +556,7 @@
         </p>
         <div class="links-row">
           <a class="btn-link primary" href="https://maps.google.com/?q=West+4th+St+Subway+Station+New+York" target="_blank">📍 W 4th St Station</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-subway-ace', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -488,6 +582,7 @@
         <div class="links-row">
           <a class="btn-link primary" href="https://maps.google.com/?q=Rudys+Bar+and+Grill+9th+Ave+New+York" target="_blank">📍 Rudy's Bar</a>
           <a class="btn-link" href="https://maps.google.com/?q=Joes+Pizza+Broadway+40th+St+New+York" target="_blank">📍 Joe's Pizza</a>
+          <button class="copy-btn" onclick="copyStopLink('stop-rudys-joes', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mark Done</button>
         </div>
       </div>
@@ -507,6 +602,7 @@
           Arrive at the gate wing by 7:10 PM. Board the <strong>7:30 PM Peter Pan Express bus</strong> back to Baltimore. Sleep the 4-hour ride home!
         </p>
         <div class="links-row">
+          <button class="copy-btn" onclick="copyStopLink('stop-pabt-depart', this)">🔗 Copy Link</button>
           <button class="check-btn" onclick="toggleComplete(this)">○ Mission Accomplished</button>
         </div>
       </div>
@@ -741,6 +837,64 @@
     renderCompletedState();
     fetchState();
     setInterval(fetchState, 3500);
+
+    
+    function copyStopLink(stopId, btn) {
+      const url = new URL(window.location.href);
+      url.hash = stopId;
+      const shareUrl = url.toString();
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showToast('🔗 Link copied to ' + stopId.replace('stop-', '').replace(/-/g, ' ') + '!');
+        }).catch(() => fallbackCopy(shareUrl));
+      } else {
+        fallbackCopy(shareUrl);
+      }
+
+      // Quick visual feedback on the button
+      const oldText = btn.innerHTML;
+      btn.innerHTML = '✓ Copied!';
+      btn.style.borderColor = 'var(--accent-green)';
+      btn.style.color = 'var(--accent-green)';
+      setTimeout(() => {
+        btn.innerHTML = oldText;
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 1800);
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('🔗 Link copied to clipboard!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      if (!toast) return;
+      toast.innerHTML = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2400);
+    }
+
+    // Scroll to hash on page load if present
+    window.addEventListener('load', () => {
+      if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 500);
+        }
+      }
+    });
 
     function sharePlan() {
       if (navigator.share) {
