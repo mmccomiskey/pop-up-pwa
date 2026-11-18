@@ -78,3 +78,39 @@ Because pop-up PWAs are created for specific events (e.g. "Friday the 20th"), ag
 - Use a scheduled task / cron runner configured for the morning after the event (e.g. `Monday 09:00 AM`).
 - The task issues `DELETE /workers/scripts/{script_name}` and `DELETE /storage/kv/namespaces/{namespace_id}`.
 - Zero leftover resources or unused endpoints on the account.
+
+---
+
+## 5. Event Discovery & Design Intake Protocol
+
+Before writing code or deploying infrastructure, the AI agent **must run this structured intake checklist** to tailor the app's visual identity, vibe, and logistics to the specific event.
+
+### 📋 Discovery Questions to Ask the User:
+
+1. **Event Type & Vibe / Aesthetic:**
+   - *Options to present:*
+     - ⚡ **Midnight / Neon Dark Mode** (bars, pub crawls, nighttime events, high energy)
+     - ☀️ **Clean Day-Tripper / Minimal Light Mode** (museums, walking tours, coffee crawls)
+     - 🌿 **Earth / Outdoors** (hiking, park visits, outdoor festivals)
+     - 🍸 **Retro / Speakeasy** (warm cream background, serif typography, burgundy/gold accents)
+   - *"Do you have a preferred vibe or theme color palette in mind?"*
+
+2. **Core Icon / Mascot Emoji:**
+   - *What single emoji best represents the event for the home-screen app icon and splash screen?* (e.g. 🍺 for beer crawl, 🍕 for food tour, ⛳ for golf trip, 🏎️ for car show, 💍 for bachelor party).
+
+3. **Logistics & Transit Anchors:**
+   - *What are the hard start and end times / transit constraints?* (e.g. arrival bus time, flight departure, dinner reservation times).
+   - *Are there specific geographic boundaries or neighborhoods to avoid zig-zagging?*
+
+4. **Group Style & Social Tone:**
+   - *Casual grazing vs. scheduled sit-downs?*
+   - *Include group chat receipts/quotes or keep it strictly logistical?*
+
+5. **Lifecycle / Teardown Date:**
+   - *When is the event officially over so we can schedule an automatic teardown of the Cloudflare Worker and KV storage?*
+
+### 🛠️ Agent Implementation Rule:
+Use the user's answers to configure:
+- CSS variables (`--bg`, `--card-bg`, `--accent-*`, `--font-*`)
+- `APP_CONFIG.iconEmoji`, `themeColor`, and splash animations in `worker.js`
+- Automated teardown schedule using the `tasks` tool
